@@ -1,76 +1,830 @@
-extends includes/layout.pug
-
-block top_img
-  - var top_img =  page.top_img || page.cover || theme.post_meta.top_img || theme.post_img || theme.top_img || config.top_img
-  - var bg_img = top_img !== true ? `background-image: url(${top_img})` : ''
-  div#top-container(style=bg_img)
-    include ./includes/header.pug
-    #post-info
-      #post-title
-          .posttitle=page.title || _p('no_title')
-      #post-meta
-        if (theme.post_meta.date_type)
-          if (theme.post_meta.date_type === 'both')
-            time.post-meta__date
-              i.fa.fa-calendar(aria-hidden="true")
-              =' '+_p('post.created')+' '+date(page.date, config.date_format)
-              span.post-meta__separator |
-              i.fa.fa-history(aria-hidden="true")
-              =' '+_p('post.updated')+' '+date(page.updated, config.date_format)
-          else
-            - var date_type = theme.post_meta.date_type === 'updated' ? 'updated' : 'date'
-            time.post-meta__date #[i.fa.fa-calendar(aria-hidden="true")] #[=date(page[date_type], config.date_format)]
-                  
-        if (theme.post_meta.categories && page.categories.data.length > 0)
-          if (theme.post_meta.date_type)
-            span.post-meta__separator.mobile_hidden |
-          span.mobile_hidden
-            each item, index in page.categories.data
-              i.fa.fa-inbox.post-meta__icon(aria-hidden="true")
-              a(href=url_for(item.path)).post-meta__categories #[=item.name]
-              if (index < page.categories.data.length - 1)
-                i.fa.fa-angle-right(aria-hidden="true")
-        if (theme.wordcount && theme.wordcount.enable)
-          .post-meta-wordcount
-            span= _p('post.wordcount') + ': '
-            span.word-count= wordcount(page.content)
-            span.post-meta__separator |
-            span= _p('post.min2read', min2read(page.content, {cn: 350, en: 160}))
-            if theme.busuanzi.page_pv
-              span.post-meta__separator |
-              span= _p('post.page_pv') + ': '
-              span#busuanzi_value_page_pv
+<!DOCTYPE html>
 
 
-block content
-  article#post(class="")
-    #post-content.article-container!= page.content
-  if (theme.post_copyright && theme.post_copyright.enable)
-    .post-copyright
-      .post-copyright__author
-        span.post-copyright-meta= _p('post.copyright.author') + ": "
-        span.post-copyright-info
-          a(href=`mailto:${config.email}`) #[=config.author]
-      .post-copyright__type
-        span.post-copyright-meta= _p('post.copyright.link') + ": "
-        span.post-copyright-info
-          a(href=url_for(page.permalink)) #[=page.permalink]
-      .post-copyright__notice
-        span.post-copyright-meta= _p('post.copyright.copyright_notice') + ": "
-        span.post-copyright-info!= _p('post.copyright.copyright_content', theme.post_copyright.license_url, theme.post_copyright.license, config.url, config.title)
+
   
-  .tag_share
-    if (theme.post_meta.tags)
-      .post-meta__tag-list
-        each item, index in page.tags.data
-          a(href=url_for(item.path)).post-meta__tags #[=item.name]    
-    include includes/share/index.pug
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="react,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="小王MM的个人博客" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="react-study2标签（空格分隔）： react  一、 事件 react事件写法与html事件写法区别   react： onClick={this.handleClick} 驼峰写法 值可以是任意类型 html: onclick=”handleClick()” 小写  值只能是字符串   react事件机制在 React 底层，主要对合成事件做了两件事：事件委派和自动绑定。   事件委派">
+<meta name="keywords" content="react">
+<meta property="og:type" content="article">
+<meta property="og:title" content="react进阶">
+<meta property="og:url" content="https://xiaowangmm2.github.io/posts/c834ce66/index.html">
+<meta property="og:site_name" content="小王MM的个人博客">
+<meta property="og:description" content="react-study2标签（空格分隔）： react  一、 事件 react事件写法与html事件写法区别   react： onClick={this.handleClick} 驼峰写法 值可以是任意类型 html: onclick=”handleClick()” 小写  值只能是字符串   react事件机制在 React 底层，主要对合成事件做了两件事：事件委派和自动绑定。   事件委派">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-06-12T06:13:41.720Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="react进阶">
+<meta name="twitter:description" content="react-study2标签（空格分隔）： react  一、 事件 react事件写法与html事件写法区别   react： onClick={this.handleClick} 驼峰写法 值可以是任意类型 html: onclick=”handleClick()” 小写  值只能是字符串   react事件机制在 React 底层，主要对合成事件做了两件事：事件委派和自动绑定。   事件委派">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://xiaowangmm2.github.io/posts/c834ce66/">
+
+
+
+
+
+  <title>react进阶 | 小王MM的个人博客</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">小王MM的个人博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">从事前端开发的码农一枚</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
         
-  if theme.reward.enable
-    include includes/reward.pug
-  include includes/pagination.pug
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
   
-  if theme.related_post && theme.related_post.enable
-    include includes/related-posts.pug
-  if page.comments !== false
-    include includes/comments/index.pug
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://xiaowangmm2.github.io/posts/c834ce66/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haiyan.wang">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小王MM的个人博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">react进阶</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-22T14:13:35+08:00">
+                2017-09-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/react/" itemprop="url" rel="index">
+                    <span itemprop="name">react</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="react-study2"><a href="#react-study2" class="headerlink" title="react-study2"></a>react-study2</h1><p>标签（空格分隔）： react</p>
+<hr>
+<h2 id="一、-事件"><a href="#一、-事件" class="headerlink" title="一、 事件"></a>一、 事件</h2><ol>
+<li>react事件写法与html事件写法区别</li>
+</ol>
+<ul>
+<li>react： onClick={this.handleClick} 驼峰写法 值可以是任意类型</li>
+<li>html: onclick=”handleClick()” 小写  值只能是字符串</li>
+</ul>
+<ol start="2">
+<li>react事件机制<br>在 React 底层，主要对合成事件做了两件事：事件委派和自动绑定。</li>
+</ol>
+<ul>
+<li><p>事件委派</p>
+<blockquote>
+<p>react事件绑定并不会把事件处理函数直接绑定到真实的节点上，而是把所有事件绑定到<strong>结构的最外层</strong>，使用一个统一的事件监听器，这个事件监听器上维持了一个映射来保存所有组件内部的事件监听和处理函数。当组件挂载或卸载时，只是在这个统一的事件监听器上插入或删除一些对象；当事件发生时，首先被这个统一的事件监听器处理，然后在映射里找到真正的事件处理函数并调用。这样做简化了事件处理和回收机制，效率也有很大提升。</p>
+</blockquote>
+</li>
+<li><p>自动绑定</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">1. bind方式</span><br><span class="line">&lt;button onClick=&#123;this.handleClick.bind(this, &apos;test&apos;)&#125;&gt;Test&lt;/button&gt;;</span><br><span class="line"></span><br><span class="line">2. 双冒号语法</span><br><span class="line">&lt;button onClick=&#123;::this.handleClick&#125;&gt;Test&lt;/button&gt;</span><br><span class="line"></span><br><span class="line">3. 构造器内声明</span><br><span class="line">constructor(props) &#123;</span><br><span class="line">    super(props);</span><br><span class="line">    this.handleClick = this.handleClick.bind(this);</span><br><span class="line">&#125;</span><br><span class="line">4. 箭头语法</span><br><span class="line">const handleClick = (e) =&gt; &#123;</span><br><span class="line">    console.log(e);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<ol start="3">
+<li><p>react中使用原生事件</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">import React, &#123; Component &#125; from &apos;react&apos;;</span><br><span class="line">class NativeEventDemo extends Component &#123;</span><br><span class="line"></span><br><span class="line">componentDidMount() &#123;</span><br><span class="line">    this.refs.button.addEventListener(&apos;click&apos;, e =&gt; &#123;</span><br><span class="line">        this.handleClick(e);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br><span class="line">handleClick(e) &#123;</span><br><span class="line">    console.log(e);</span><br><span class="line">&#125;</span><br><span class="line">componentWillUnmount() &#123;</span><br><span class="line">//值得注意的是，在 React中使用DOM原生事件时，一定要在组件卸载时手动移除，否则很可能出现内存泄漏的问题。而使用合成事件系统时则不需要，因为 React 内部已经帮你妥善地处理了。</span><br><span class="line">    this.refs.button.removeEventListener(&apos;click&apos;);</span><br><span class="line">&#125;</span><br><span class="line">render() &#123;</span><br><span class="line">    return &lt;button ref=&quot;button&quot;&gt;Test&lt;/button&gt;;</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>react事件与原生事件的对比</p>
+</li>
+</ol>
+<ul>
+<li><p>事件机制<br>原生事件： 可以分为3个阶段：事件捕获阶段、目标对象本身的事件处理程序调用以及事件冒泡。<br>react事件： 并没有实现事件捕获，仅仅支持了事件冒泡机制</p>
+</li>
+<li><p>事件类型<br>React 合成事件的事件类型是 JavaScript 原生事件类型的一个子集</p>
+</li>
+<li><p>事件绑定方式<br>原生：</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">//dom上绑定</span><br><span class="line">&lt;button onclick=&quot;alert(1);&quot;&gt;Test&lt;/button&gt;</span><br><span class="line">//属性赋值</span><br><span class="line">el.onclick = e =&gt; &#123; console.log(e); &#125;</span><br><span class="line">//事件监听函数</span><br><span class="line">el.addEventListener(&apos;click&apos;, () =&gt; &#123;&#125;, false);</span><br><span class="line">el.attachEvent(&apos;onclick&apos;, () =&gt; &#123;&#125;);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>事件对象<br>原生： IE与现代浏览器有差异<br>react: 无差异</p>
+</li>
+</ul>
+<a id="more"></a>
+<h2 id="二、表单"><a href="#二、表单" class="headerlink" title="二、表单"></a>二、表单</h2><ol>
+<li>注意点</li>
+</ol>
+<ul>
+<li>textarea<br>JSX 中的 textarea组件与类型为text的input组件的用法很类似。同样有一个 <strong>value prop</strong>用来表示表单的值，而在HTML中textarea的值则是通过<strong>children</strong> 来表示的。</li>
+<li>select<br>multiple={true}表示多选。在HTML的option组件中需要一个<strong>selected</strong>属性来表示默认选中的列表项，而 React 的处理方式则是通过为select 组件添加 <strong>value prop</strong>来表示选中的option，在设置了multiple={true}的情况下，该value值是一个数组，表示选中的一组值。这一点与textarea的处理方式一致，这在一定程度上统一了接口。</li>
+</ul>
+<ol start="2">
+<li>React 受控组件更新 state 的流程</li>
+</ol>
+<ul>
+<li>可以通过在初始 state 中设置表单的默认值。</li>
+<li>每当表单的值发生变化时，调用 onChange 事件处理器。</li>
+<li>事件处理器通过合成事件对象e拿到改变后的状态，并更新应用的state</li>
+<li>setState 触发视图的重新渲染，完成表单组件值的更新。</li>
+</ul>
+<ol start="3">
+<li>受控组件VS非受控组件</li>
+</ol>
+<ul>
+<li>非受控组件的状态并不会受应用状态的控制，应用中也多了局部组<br>件状态，而受控组件的值来自于组件的 state。</li>
+</ul>
+<h2 id="三、react中样式"><a href="#三、react中样式" class="headerlink" title="三、react中样式"></a>三、react中样式</h2><ol>
+<li>行内样式使用对象写法，且属性使用驼峰表达式表示</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">const style = &#123;</span><br><span class="line">    color: &apos;white&apos;,</span><br><span class="line">    backgroundImage: `url($&#123;imgUrl&#125;)`,</span><br><span class="line">    // 注意这里大写的 W，会转换成 -webkit-transition</span><br><span class="line">    WebkitTransition: &apos;all&apos;,</span><br><span class="line">    // ms 是唯一小写的浏览器前缀</span><br><span class="line">    msTransition: &apos;all&apos;,</span><br><span class="line">&#125;;</span><br><span class="line">const component = &lt;Component style=&#123;style&#125; /&gt;;</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>数值类的值，不建议写px,默认会加px</li>
+</ol>
+<h2 id="四、组件通信"><a href="#四、组件通信" class="headerlink" title="四、组件通信"></a>四、组件通信</h2><ol>
+<li>父组件向子组件通信</li>
+</ol>
+<ul>
+<li>props</li>
+</ul>
+<ol start="2">
+<li>子组件向父组件通信</li>
+</ol>
+<ul>
+<li>利用回调函</li>
+<li>利用自定义事件机制</li>
+</ul>
+<ol start="3">
+<li>跨级嵌套<strong>（父子）</strong>组件通信（context）<blockquote>
+<p>React 官方并不建议大量使用context，因为尽管它可以减少逐层传递，但当组件结构复杂的时候，我们并不知道context是从哪里传过来的。Context 就像一个全局变量一样，而全局变量正是导致应用走向混乱的罪魁祸首之一，给组件带来了外部依赖的副作用。在大部分情况下，我们并不推荐使用 context。使用context比较好的场景是真正意义上的全局信息且不会更改，例如界面主题、用户信息等。</p>
+</blockquote>
+</li>
+<li>跨级非嵌套组件通信（事件）</li>
+</ol>
+<h2 id="五、mixin"><a href="#五、mixin" class="headerlink" title="五、mixin"></a>五、mixin</h2><ol>
+<li>js类似的实现</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">const mixin = function(obj, mixins) &#123;</span><br><span class="line">    const newObj = obj;</span><br><span class="line">    newObj.prototype = Object.create(obj.prototype);</span><br><span class="line">    for (let prop in mixins) &#123;</span><br><span class="line">        if (mixins.hasOwnProperty(prop)) &#123;</span><br><span class="line">            newObj.prototype[prop] = mixins[prop];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return newObj;</span><br><span class="line">&#125;</span><br><span class="line">const BigMixin = &#123;</span><br><span class="line">    fly: () =&gt; &#123;</span><br><span class="line">    console.log(&apos;I can fly&apos;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line">const Big = function() &#123;</span><br><span class="line">    console.log(&apos;new big&apos;);</span><br><span class="line">&#125;;</span><br><span class="line">const FlyBig = mixin(Big, BigMixin);</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>react组件实现mixin</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">//createClass官方支持引入mixin</span><br><span class="line">React.createClass(&#123;</span><br><span class="line">    mixins: [PureRenderMixin],</span><br><span class="line">    render() &#123;</span><br><span class="line">        return &lt;div&gt;foo&lt;/div&gt;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<ul>
+<li>普通方法：不能有两个同名的方法</li>
+<li>生命周期方法：会将各个模块的生命周期方法叠加在一起顺序执行</li>
+</ul>
+<h2 id="六、高阶组件"><a href="#六、高阶组件" class="headerlink" title="六、高阶组件"></a>六、高阶组件</h2><ol>
+<li><a href="#prop">属性代理</a>: 高阶组件通过被包裹的 React 组件来操作 props。</li>
+<li>反向继承: 高阶组件继承于被包裹的 React 组件</li>
+</ol>
+<p><span id="prop"></span><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">//从功能上，高阶组件一样可以做到像 mixin 对组件的控制，包括控制 props、通过 refs 使用引用、抽象 state 和使用其他元素包裹 WrappedComponent。</span><br><span class="line">import React, &#123; Component &#125; from &apos;React&apos;;</span><br><span class="line">const MyContainer = (WrappedComponent) =&gt;</span><br><span class="line">    class extends Component &#123;</span><br><span class="line">        render() &#123;</span><br><span class="line">            return &lt;WrappedComponent &#123;...this.props&#125; /&gt;;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">import React, &#123; Component &#125; from &apos;React&apos;;</span><br><span class="line">class MyComponent extends Component &#123;</span><br><span class="line">// ...</span><br><span class="line">&#125;</span><br><span class="line">export default MyContainer(MyComponent);</span><br></pre></td></tr></table></figure></p>
+<h2 id="七、组件性能优化"><a href="#七、组件性能优化" class="headerlink" title="七、组件性能优化"></a>七、组件性能优化</h2><p><a href="https://segmentfault.com/a/1190000006100489" target="_blank" rel="noopener">相关文章</a></p>
+<ol>
+<li>PureRender,immutable</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">import React, &#123; Component &#125; from &apos;react&apos;;</span><br><span class="line">import &#123; is &#125; from &apos;immutable&apos;;</span><br><span class="line">class App extends Component &#123;</span><br><span class="line">    //shouldComponentUpdate-&gt;rener-&gt;diff dom</span><br><span class="line">    shouldComponentUpdate(nextProps, nextState) &#123;</span><br><span class="line">        const thisProps = this.props || &#123;&#125;;</span><br><span class="line">        const thisState = this.state || &#123;&#125;;</span><br><span class="line">        if (Object.keys(thisProps).length !==                              Object.keys(nextProps).length ||</span><br><span class="line">            Object.keys(thisState).length !==                              Object.keys(nextState).length) &#123;</span><br><span class="line">                return true;</span><br><span class="line">        &#125;</span><br><span class="line">        for (const key in nextProps) &#123;</span><br><span class="line">            if (nextProps.hasOwnProperty(key) &amp;&amp;</span><br><span class="line">                !is(thisProps[key], nextProps[key])) &#123;</span><br><span class="line">                return true;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    for (const key in nextState) &#123;</span><br><span class="line">        if (nextState.hasOwnProperty(key) &amp;&amp;</span><br><span class="line">            !is(thisState[key], nextState[key])) &#123;</span><br><span class="line">            return true;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return false;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>key(唯一值)</li>
+</ol>
+<h2 id="八、相关demo"><a href="#八、相关demo" class="headerlink" title="八、相关demo"></a>八、相关demo</h2><p><a href="https://github.com/xiaowangmm2/react-demo/tree/master/react-form-demo" target="_blank" rel="noopener">地址</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/react/" rel="tag"># react</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/posts/de3ba3c/" rel="next" title="react简介">
+                <i class="fa fa-chevron-left"></i> react简介
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/posts/f3fb008f/" rel="prev" title="博客搭建">
+                博客搭建 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">haiyan.wang</p>
+              <p class="site-description motion-element" itemprop="description">每天都有所成长</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#react-study2"><span class="nav-number">1.</span> <span class="nav-text">react-study2</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、-事件"><span class="nav-number">1.1.</span> <span class="nav-text">一、 事件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、表单"><span class="nav-number">1.2.</span> <span class="nav-text">二、表单</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、react中样式"><span class="nav-number">1.3.</span> <span class="nav-text">三、react中样式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四、组件通信"><span class="nav-number">1.4.</span> <span class="nav-text">四、组件通信</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#五、mixin"><span class="nav-number">1.5.</span> <span class="nav-text">五、mixin</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#六、高阶组件"><span class="nav-number">1.6.</span> <span class="nav-text">六、高阶组件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#七、组件性能优化"><span class="nav-number">1.7.</span> <span class="nav-text">七、组件性能优化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#八、相关demo"><span class="nav-number">1.8.</span> <span class="nav-text">八、相关demo</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">haiyan.wang</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
