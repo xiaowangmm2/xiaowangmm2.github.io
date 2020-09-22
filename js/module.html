@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>一、模块加载机制 | 王海艳技术文档</title>
+    <meta name="description" content="王海艳技术文档">
+    <meta name="generator" content="VuePress 1.4.0">
+    
+    
+    <link rel="preload" href="/assets/css/0.styles.a320c9c6.css" as="style"><link rel="preload" href="/assets/js/app.fa589e4c.js" as="script"><link rel="preload" href="/assets/js/2.a62bccad.js" as="script"><link rel="preload" href="/assets/js/33.cab00a3d.js" as="script"><link rel="prefetch" href="/assets/js/10.76715b29.js"><link rel="prefetch" href="/assets/js/11.ee837769.js"><link rel="prefetch" href="/assets/js/12.eafa1350.js"><link rel="prefetch" href="/assets/js/13.b70b3f96.js"><link rel="prefetch" href="/assets/js/14.0f470918.js"><link rel="prefetch" href="/assets/js/15.f8d26315.js"><link rel="prefetch" href="/assets/js/16.81e59e9d.js"><link rel="prefetch" href="/assets/js/17.684d7686.js"><link rel="prefetch" href="/assets/js/18.729a569a.js"><link rel="prefetch" href="/assets/js/19.89b0cefa.js"><link rel="prefetch" href="/assets/js/20.0f79024f.js"><link rel="prefetch" href="/assets/js/21.d1cbfee7.js"><link rel="prefetch" href="/assets/js/22.bc8ba32d.js"><link rel="prefetch" href="/assets/js/23.5e107726.js"><link rel="prefetch" href="/assets/js/24.3ad698b3.js"><link rel="prefetch" href="/assets/js/25.a6de8488.js"><link rel="prefetch" href="/assets/js/26.7549cd9e.js"><link rel="prefetch" href="/assets/js/27.c054e1f4.js"><link rel="prefetch" href="/assets/js/28.bddb2974.js"><link rel="prefetch" href="/assets/js/29.b34c6893.js"><link rel="prefetch" href="/assets/js/3.0147c88e.js"><link rel="prefetch" href="/assets/js/30.688ac341.js"><link rel="prefetch" href="/assets/js/31.76fcb8bc.js"><link rel="prefetch" href="/assets/js/32.9eef067e.js"><link rel="prefetch" href="/assets/js/34.9246853b.js"><link rel="prefetch" href="/assets/js/35.38c370a0.js"><link rel="prefetch" href="/assets/js/36.7cb57fb0.js"><link rel="prefetch" href="/assets/js/37.e6fdcc74.js"><link rel="prefetch" href="/assets/js/38.ec6f76e7.js"><link rel="prefetch" href="/assets/js/39.416f1a3f.js"><link rel="prefetch" href="/assets/js/4.bee881fa.js"><link rel="prefetch" href="/assets/js/40.dfa06923.js"><link rel="prefetch" href="/assets/js/41.33f4c1a9.js"><link rel="prefetch" href="/assets/js/42.670f9319.js"><link rel="prefetch" href="/assets/js/43.30d7223c.js"><link rel="prefetch" href="/assets/js/44.f7b9fa7a.js"><link rel="prefetch" href="/assets/js/45.834a0a6f.js"><link rel="prefetch" href="/assets/js/46.67f15ef4.js"><link rel="prefetch" href="/assets/js/47.ec25b1c5.js"><link rel="prefetch" href="/assets/js/48.efcb3667.js"><link rel="prefetch" href="/assets/js/49.35dc242b.js"><link rel="prefetch" href="/assets/js/5.ed3ba1c4.js"><link rel="prefetch" href="/assets/js/50.0c0d8edf.js"><link rel="prefetch" href="/assets/js/51.2dea7335.js"><link rel="prefetch" href="/assets/js/52.ac1c54a8.js"><link rel="prefetch" href="/assets/js/53.58577997.js"><link rel="prefetch" href="/assets/js/54.73644fb0.js"><link rel="prefetch" href="/assets/js/55.ac39e7d0.js"><link rel="prefetch" href="/assets/js/56.212ada78.js"><link rel="prefetch" href="/assets/js/57.42d41b5c.js"><link rel="prefetch" href="/assets/js/58.0dfdcb00.js"><link rel="prefetch" href="/assets/js/59.1ec4e5e6.js"><link rel="prefetch" href="/assets/js/6.2936b537.js"><link rel="prefetch" href="/assets/js/60.185f3a6d.js"><link rel="prefetch" href="/assets/js/61.06f0fcf9.js"><link rel="prefetch" href="/assets/js/62.791597c2.js"><link rel="prefetch" href="/assets/js/63.405f91d1.js"><link rel="prefetch" href="/assets/js/64.5d0c5e0d.js"><link rel="prefetch" href="/assets/js/65.c2643bbb.js"><link rel="prefetch" href="/assets/js/66.6afeccee.js"><link rel="prefetch" href="/assets/js/67.25119c63.js"><link rel="prefetch" href="/assets/js/68.3ee53cfe.js"><link rel="prefetch" href="/assets/js/69.c3918d84.js"><link rel="prefetch" href="/assets/js/7.02ca0a2c.js"><link rel="prefetch" href="/assets/js/70.9ab5ed57.js"><link rel="prefetch" href="/assets/js/71.968ad74d.js"><link rel="prefetch" href="/assets/js/8.16eb1cb4.js"><link rel="prefetch" href="/assets/js/9.4cee5b5c.js">
+    <link rel="stylesheet" href="/assets/css/0.styles.a320c9c6.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/" class="home-link router-link-active"><!----> <span class="site-name">王海艳技术文档</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="前端工具" class="dropdown-title"><span class="title">前端工具</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/utils/tool/npm.html" class="nav-link">
+  常用工具
+</a></li><li class="dropdown-item"><!----> <a href="/utils/git/" class="nav-link">
+  git规范
+</a></li><li class="dropdown-item"><!----> <a href="/utils/code_rule/" class="nav-link">
+  前端代码规范
+</a></li></ul></div></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="javascript" class="dropdown-title"><span class="title">javascript</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/js/module.html" class="nav-link router-link-exact-active router-link-active">
+  es6之module
+</a></li><li class="dropdown-item"><!----> <a href="/js/bug.html" class="nav-link">
+  js采坑点
+</a></li><li class="dropdown-item"><!----> <a href="/js/util.html" class="nav-link">
+  js工具方法
+</a></li></ul></div></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="小程序端" class="dropdown-title"><span class="title">小程序端</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/weixin/life.html" class="nav-link">
+  小程序生命周期
+</a></li><li class="dropdown-item"><!----> <a href="/weixin/wxnpm.html" class="nav-link">
+  小程序中使用npm包
+</a></li><li class="dropdown-item"><!----> <a href="/weixin/weui.html" class="nav-link">
+  WEUI组件的使用
+</a></li><li class="dropdown-item"><!----> <a href="/weixin/goback.html" class="nav-link">
+  小程序回退
+</a></li></ul></div></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="移动端" class="dropdown-title"><span class="title">移动端</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/H5/viewport.html" class="nav-link">
+  移动端适配
+</a></li></ul></div></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="前端框架" class="dropdown-title"><span class="title">前端框架</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/frame/react/base.html" class="nav-link">
+  react框架
+</a></li><li class="dropdown-item"><!----> <a href="/frame/es_6/async.html" class="nav-link">
+  es6
+</a></li></ul></div></div> <a href="http://gitlab.tf56.lo/pms-front/pms-docs" target="_blank" rel="noopener noreferrer" class="repo-link">
+    GitLab
+    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></nav></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><nav class="nav-links"><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="前端工具" class="dropdown-title"><span class="title">前端工具</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/utils/tool/npm.html" class="nav-link">
+  常用工具
+</a></li><li class="dropdown-item"><!----> <a href="/utils/git/" class="nav-link">
+  git规范
+</a></li><li class="dropdown-item"><!----> <a href="/utils/code_rule/" class="nav-link">
+  前端代码规范
+</a></li></ul></div></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="javascript" class="dropdown-title"><span class="title">javascript</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/js/module.html" class="nav-link router-link-exact-active router-link-active">
+  es6之module
+</a></li><li class="dropdown-item"><!----> <a href="/js/bug.html" class="nav-link">
+  js采坑点
+</a></li><li class="dropdown-item"><!----> <a href="/js/util.html" class="nav-link">
+  js工具方法
+</a></li></ul></div></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="小程序端" class="dropdown-title"><span class="title">小程序端</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/weixin/life.html" class="nav-link">
+  小程序生命周期
+</a></li><li class="dropdown-item"><!----> <a href="/weixin/wxnpm.html" class="nav-link">
+  小程序中使用npm包
+</a></li><li class="dropdown-item"><!----> <a href="/weixin/weui.html" class="nav-link">
+  WEUI组件的使用
+</a></li><li class="dropdown-item"><!----> <a href="/weixin/goback.html" class="nav-link">
+  小程序回退
+</a></li></ul></div></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="移动端" class="dropdown-title"><span class="title">移动端</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/H5/viewport.html" class="nav-link">
+  移动端适配
+</a></li></ul></div></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="前端框架" class="dropdown-title"><span class="title">前端框架</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/frame/react/base.html" class="nav-link">
+  react框架
+</a></li><li class="dropdown-item"><!----> <a href="/frame/es_6/async.html" class="nav-link">
+  es6
+</a></li></ul></div></div> <a href="http://gitlab.tf56.lo/pms-front/pms-docs" target="_blank" rel="noopener noreferrer" class="repo-link">
+    GitLab
+    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></nav>  <ul class="sidebar-links"><li><section class="sidebar-group depth-0"><p class="sidebar-heading open"><span>目录</span> <!----></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/js/module.html" class="active sidebar-link">es6之module</a><ul class="sidebar-sub-headers"></ul></li><li><a href="/js/bug.html" class="sidebar-link">js采坑点</a></li><li><a href="/js/util.html" class="sidebar-link">js工具方法</a></li></ul></section></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><h3 id="一、模块加载机制"><a href="#一、模块加载机制" class="header-anchor">#</a> 一、模块加载机制</h3> <ul><li>编译时加载 es6-module</li></ul> <div class="language- extra-class"><pre class="language-text"><code>import { stat, exists, readFile } from 'fs';
+//上面代码的实质是从fs模块加载 3 个方法，其他方法不加载。这种加载称为“编译时加载”或者静态加载，即 ES6 可以在编译时就完成模块加载，效率要比 CommonJS 模块的加载方式高。当然，这也导致了没法引用 ES6 模块本身，因为它不是对象。
+</code></pre></div><ul><li>运行时加载 commonjs</li></ul> <div class="language- extra-class"><pre class="language-text"><code>// CommonJS模块
+let { stat, exists, readFile } = require('fs');
+
+// 等同于
+let _fs = require('fs');
+let stat = _fs.stat;
+let exists = _fs.exists;
+let readfile = _fs.readfile;
+//上面代码的实质是整体加载fs模块（即加载fs的所有方法），生成一个对象（_fs），然后再从这个对象上面读取 3 个方法。这种加载称为“运行时加载”，因为只有运行时才能得到这个对象，导致完全没办法在编译时做“静态优化”。
+</code></pre></div><h3 id="二、export-命令"><a href="#二、export-命令" class="header-anchor">#</a> 二、export 命令</h3> <ul><li>常用语法</li></ul> <div class="language- extra-class"><pre class="language-text"><code>export var firstName = 'Michael';
+export var lastName = 'Jackson';
+export var year = 1958;
+//等同于
+var firstName = 'Michael';
+var lastName = 'Jackson';
+var year = 1958;
+
+export {firstName, lastName, year};
+</code></pre></div><ul><li>动态绑定</li></ul> <div class="language- extra-class"><pre class="language-text"><code>export var foo = 'bar';
+setTimeout(() =&gt; foo = 'baz', 500);
+//上面代码输出变量foo，值为bar，500 毫秒之后变成baz。
+//export语句输出的接口，与其对应的值是动态绑定关系，即通过该接口，可以取到模块内部实时的值。
+</code></pre></div><h3 id="三、import-命令"><a href="#三、import-命令" class="header-anchor">#</a> 三、import 命令</h3> <ul><li>只读属性</li></ul> <div class="language- extra-class"><pre class="language-text"><code>//import命令输入的变量都是只读的，因为它的本质是输入接口。也就是说，不允许在加载模块的脚本里面，改写接口。
+import {a} from './xxx.js'
+a = {};
+
+a.foo = 'hello'; // 合法操作
+//如果a是一个对象，改写a的属性是允许的。但是不建议
+</code></pre></div><ul><li>静态执行</li></ul> <div class="language- extra-class"><pre class="language-text"><code>//由于import是静态执行，所以不能使用表达式和变量，这些只有在运行时才能得到结果的语法结构。
+// 报错
+import { 'f' + 'oo' } from 'my_module';
+
+// 报错
+let module = 'my_module';
+import { foo } from module;
+
+// 报错
+if (x === 1) {
+  import { foo } from 'module1';
+} else {
+  import { foo } from 'module2';
+}
+</code></pre></div><ul><li>执行次数</li></ul> <div class="language- extra-class"><pre class="language-text"><code>//如果多次重复执行同一句import语句，那么只会执行一次，而不会执行多次。
+import 'lodash';
+import 'lodash';
+
+import { foo } from 'my_module';
+import { bar } from 'my_module';
+// 等同于
+import { foo, bar } from 'my_module';
+</code></pre></div><h3 id="四、export-default-命令"><a href="#四、export-default-命令" class="header-anchor">#</a> 四、export default 命令</h3> <ul><li>使用,export default 只能使用一次</li></ul> <div class="language- extra-class"><pre class="language-text"><code>// export-default.js
+export default function () {
+  console.log('foo');
+}
+
+import customName from './export-default';
+customName(); // 'foo'
+//import命令可以为该匿名函数指定任意名字,需要注意的是，这时import命令后面，不使用大括号。
+</code></pre></div><ul><li>默认输出与正常输出对比</li></ul> <div class="language- extra-class"><pre class="language-text"><code>// 第一组
+export default function crc32() { // 输出
+  // ...
+}
+import crc32 from 'crc32'; // 输入
+
+// 第二组
+export function crc32() { // 输出
+  // ...
+};
+import {crc32} from 'crc32'; // 输入
+</code></pre></div><ul><li>变量</li></ul> <div class="language- extra-class"><pre class="language-text"><code>// 正确
+export var a = 1;
+
+// 正确
+var a = 1;
+export default a;
+//export default a的含义是将变量a的值赋给变量default
+
+// 错误
+export default var a = 1;
+//正是因为export default命令其实只是输出一个叫做default的变量，所以它后面不能跟变量声明语句。
+
+// 正确
+export default 42;
+// 报错
+export 42;
+//上面代码中，后一句报错是因为没有指定对外的接口，而前一句指定外对接口为default
+
+import _, { each, each as forEach } from 'lodash';
+//如果想在一条import语句中，同时输入默认方法和其他接口，可以写成下面这样。
+</code></pre></div><h3 id="五、复合写法"><a href="#五、复合写法" class="header-anchor">#</a> 五、复合写法</h3> <div class="language- extra-class"><pre class="language-text"><code>export { foo, bar } from 'my_module';
+
+// 可以简单理解为
+import { foo, bar } from 'my_module';
+export { foo, bar };
+</code></pre></div><h3 id="六、动态加载"><a href="#六、动态加载" class="header-anchor">#</a> 六、动态加载</h3> <div class="language- extra-class"><pre class="language-text"><code>const path = './' + fileName;
+const myModual = require(path);
+//因为require是运行时加载模块，import命令无法取代require的动态加载功能。
+</code></pre></div><h3 id="七、script-的-defer-与-async-的区别"><a href="#七、script-的-defer-与-async-的区别" class="header-anchor">#</a> 七、script 的 defer 与 async 的区别</h3> <p>defer 与 async 的区别是：defer 要等到整个页面在内存中正常渲染结束（DOM 结构完全生成，以及其他脚本执行完成），才会执行；async 一旦下载完，渲染引擎就会中断渲染，执行这个脚本以后，再继续渲染。一句话，defer 是“渲染完再执行”，async 是“下载完就执行”。另外，如果有多个 defer 脚本，会按照它们在页面出现的顺序加载，而多个 async 脚本是不能保证加载顺序的。</p> <h3 id="八、es6-模块与-commonjs-模块的差异"><a href="#八、es6-模块与-commonjs-模块的差异" class="header-anchor">#</a> 八、ES6 模块与 CommonJS 模块的差异</h3> <ul><li>CommonJS 模块输出的是一个值的拷贝，ES6 模块输出的是值的引用</li> <li>CommonJS 模块是运行时加载，ES6 模块是编译时输出接口。</li></ul></div> <footer class="page-edit"><!----> <!----></footer> <div class="page-nav"><p class="inner"><!----> <span class="next"><a href="/js/bug.html">
+        js采坑点
+      </a>
+      →
+    </span></p></div> </main></div><div class="global-ui"></div></div>
+    <script src="/assets/js/app.fa589e4c.js" defer></script><script src="/assets/js/2.a62bccad.js" defer></script><script src="/assets/js/33.cab00a3d.js" defer></script>
+  </body>
+</html>
